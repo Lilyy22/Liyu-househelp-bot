@@ -687,7 +687,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data['detected_name'] = detected_name
     
     # Add logo and phone number to the welcome message
-    welcome_text = get_text(context, 'initial_welcome', user_name=user.first_name)
+    welcome_text = get_text(context, 'initial_welcome', {'user_name': user.first_name})
     
     welcome_with_contact = (
         "📞 ልዩ አጋዥ\n"
@@ -714,7 +714,7 @@ async def main_menu_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if choice in ["🚀 Start", "🚀 ጀምር"]:
         user = update.message.from_user
         await update.message.reply_text(
-            get_text(context, 'service_type_prompt', user_name=user.first_name),
+            get_text(context, 'service_type_prompt', {'user_name': user.first_name}),
             reply_markup=ReplyKeyboardMarkup(
                 get_menu(context, 'service_type_menu'),
                 one_time_keyboard=True,
@@ -739,7 +739,7 @@ async def main_menu_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif choice in ["⚙️ Settings", "⚙️ ማስተካከያ"]:
         current_lang = "English" if language == 'english' else "አማርኛ (Amharic)"
         await update.message.reply_text(
-            get_text(context, 'settings_text', current_language=current_lang),
+            get_text(context, 'settings_text', {'current_language':current_lang}),
             reply_markup=ReplyKeyboardMarkup(
                 get_menu(context, 'settings_menu'),
                 one_time_keyboard=True,
@@ -767,7 +767,7 @@ async def info_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if choice in ["🏠 Back to Main Menu", "🏠 ወደ ዋና ገፅ ተመለስ"]:
         user = update.message.from_user
         await update.message.reply_text(
-            get_text(context, 'initial_welcome', user_name=user.first_name),
+            get_text(context, 'initial_welcome', {'user_name': user.first_name}),
             reply_markup=ReplyKeyboardMarkup(
                 get_main_menu(context),
                 one_time_keyboard=True,
@@ -798,7 +798,7 @@ async def settings_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_info = context.user_data.get('user_info', {})
         user_name = user_info.get('first_name', 'there')
         await update.message.reply_text(
-            get_text(context, 'initial_welcome', user_name=user_name),
+            get_text(context, 'initial_welcome', {'user_name':user_name}),
             reply_markup=ReplyKeyboardMarkup(
                 get_main_menu(context),
                 one_time_keyboard=True,
@@ -826,7 +826,7 @@ async def language_selection(update: Update, context: ContextTypes.DEFAULT_TYPE)
     user_info = context.user_data.get('user_info', {})
     user_name = user_info.get('first_name', 'there')
     await update.message.reply_text(
-        get_text(context, 'initial_welcome', user_name=user_name),
+        get_text(context, 'initial_welcome', {'user_name':user_name}),
         reply_markup=ReplyKeyboardMarkup(
             get_main_menu(context),
             one_time_keyboard=True,
@@ -844,10 +844,10 @@ async def service_type(update: Update, context: ContextTypes.DEFAULT_TYPE):
         context.user_data['editing_from_confirmation'] = False
         return await show_confirmation(update, context)
     
-    service_description = get_text(context, 'service_type_selected', key=service_type)
+    service_description = get_text(context, 'service_type_selected', {'key':service_type})
     
     await update.message.reply_text(
-        get_text(context, 'services_prompt', service_description=service_description),
+        get_text(context, 'services_prompt', {'service_description':service_description}),
         reply_markup=ReplyKeyboardMarkup(
             create_service_selection_menu(context),
             one_time_keyboard=False,
@@ -922,7 +922,10 @@ async def services(update: Update, context: ContextTypes.DEFAULT_TYPE):
         service_details = context.user_data['services']
         
         await update.message.reply_text(
-            get_text(context, 'name_prompt', service_details=service_details, detected_name=detected_name),
+            get_text(context, 'name_prompt', {
+                'service_details': service_details,
+                'detected_name': detected_name
+            }),
             reply_markup=ReplyKeyboardMarkup(
                 get_menu(context, 'name_confirm_menu'),
                 one_time_keyboard=True,
@@ -1071,7 +1074,10 @@ async def contact_check(update: Update, context: ContextTypes.DEFAULT_TYPE):
         service_details = context.user_data['services']
         
         await update.message.reply_text(
-            get_text(context, 'name_prompt', service_details=service_details, detected_name=detected_name),
+            get_text(context, 'name_prompt', {
+                'service_details': service_details,
+                'detected_name': detected_name
+            }),
             reply_markup=ReplyKeyboardMarkup(
                 get_menu(context, 'name_confirm_menu'),
                 one_time_keyboard=True,
@@ -1103,7 +1109,7 @@ async def name_confirm(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ]
         
         await update.message.reply_text(
-            get_text(context, 'name_confirmed', name=detected_name),
+            get_text(context, 'name_confirmed', {'name':detected_name}),
             reply_markup=ReplyKeyboardMarkup(
                 phone_keyboard,
                 one_time_keyboard=True,
@@ -1146,7 +1152,7 @@ async def name_confirm(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ]
         
         await update.message.reply_text(
-            get_text(context, 'name_confirmed', name=name),
+            get_text(context, 'name_confirmed', {'name':name}),
             reply_markup=ReplyKeyboardMarkup(
                 phone_keyboard,
                 one_time_keyboard=True,
@@ -1242,7 +1248,7 @@ async def location(update: Update, context: ContextTypes.DEFAULT_TYPE):
         context.user_data['location_source'] = 'gps'
         
         await update.message.reply_text(
-            get_text(context, 'location_confirmed', location=location_text)
+            get_text(context, 'location_confirmed', {'location':location_text})
         )
         return await show_confirmation(update, context)
     
@@ -1275,7 +1281,7 @@ async def location(update: Update, context: ContextTypes.DEFAULT_TYPE):
         context.user_data['location_source'] = 'manual_entry'
         
         await update.message.reply_text(
-            get_text(context, 'location_confirmed', location=address)
+            get_text(context, 'location_confirmed', {'location':address})
         )
         return await show_confirmation(update, context)
 
@@ -1294,9 +1300,14 @@ async def show_confirmation(update: Update, context: ContextTypes.DEFAULT_TYPE):
         phone_status = "(✅ ተረጋገጧል)" if phone_source == 'contact_shared' else "(📝 በእጅ)"
     
     await update.message.reply_text(
-        get_text(context, 'confirmation_summary', 
-                name=name, phone=phone, phone_status=phone_status,
-                service_type=service_type, services=services, location=location),
+        get_text(context, 'confirmation_summary', {
+            'name': name,
+            'phone': phone,
+            'phone_status': phone_status,
+            'service_type': service_type,
+            'services': services,
+            'location': location
+        }),
         reply_markup=ReplyKeyboardMarkup(
             get_menu(context, 'confirmation_menu'),
             one_time_keyboard=True,
@@ -1345,8 +1356,13 @@ async def confirmation(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
         # Final success message
         await update.message.reply_text(
-            get_text(context, 'success_message', name=name, service_type=service_type, services=services, phone=phone, location=location)
-        )
+            get_text(context, 'success_message',
+                      {
+                    'name': name,
+                    'service_type': service_type,
+                    'services': services,
+                    'location': location
+                }))
         
         language = get_user_language(context)
         post_submission_menu = [
@@ -1387,7 +1403,7 @@ async def confirmation(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_info = context.user_data.get('user_info', {})
         user_name = user_info.get('first_name', 'there')
         await update.message.reply_text(
-            get_text(context, 'service_type_prompt', user_name=user_name),
+            get_text(context, 'service_type_prompt', {'user_name':user_name}),
             reply_markup=ReplyKeyboardMarkup(
                 get_menu(context, 'service_type_menu'),
                 one_time_keyboard=True,
@@ -1398,9 +1414,9 @@ async def confirmation(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     elif choice == confirmation_menu[1][1]:  # "Edit Services" equivalent
         context.user_data['editing_from_confirmation'] = True
-        service_description = get_text(context, 'service_type_selected', key=context.user_data.get('service_type', ''))
+        service_description = get_text(context, 'service_type_selected', {'key':context.user_data.get('service_type', '')})
         await update.message.reply_text(
-            get_text(context, 'services_prompt', service_description=service_description),
+            get_text(context, 'services_prompt', {'service_description':service_description}),
             reply_markup=ReplyKeyboardMarkup(
                 create_service_selection_menu(context),
                 one_time_keyboard=False,
@@ -1413,9 +1429,12 @@ async def confirmation(update: Update, context: ContextTypes.DEFAULT_TYPE):
         context.user_data['editing_from_confirmation'] = True
         detected_name = context.user_data.get('detected_name', '')
         services = context.user_data.get('services', '')
-        service_details = get_text(context, 'service_details', key=services)
+        service_details = get_text(context, 'service_details', {'key':services})
         await update.message.reply_text(
-            get_text(context, 'name_prompt', service_details=service_details, detected_name=detected_name),
+            get_text(context, 'name_prompt', {
+                'service_details': service_details,
+                'detected_name': detected_name
+            }),
             reply_markup=ReplyKeyboardMarkup(
                 get_menu(context, 'name_confirm_menu'),
                 one_time_keyboard=True,
@@ -1433,7 +1452,7 @@ async def confirmation(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ]
         
         await update.message.reply_text(
-            get_text(context, 'name_confirmed', name=context.user_data.get('name', '')),
+            get_text(context, 'name_confirmed', {'name':context.user_data.get('name', '')}),
             reply_markup=ReplyKeyboardMarkup(
                 phone_keyboard,
                 one_time_keyboard=True,
@@ -1478,7 +1497,7 @@ async def post_submission_handler(update: Update, context: ContextTypes.DEFAULT_
         user_info = context.user_data.get('user_info', {})
         user_name = user_info.get('first_name', 'there')
         await update.message.reply_text(
-            get_text(context, 'service_type_prompt', user_name=user_name),
+            get_text(context, 'service_type_prompt', {'user_name':user_name}),
             reply_markup=ReplyKeyboardMarkup(
                 get_menu(context, 'service_type_menu'),
                 one_time_keyboard=True,
@@ -1492,7 +1511,7 @@ async def post_submission_handler(update: Update, context: ContextTypes.DEFAULT_
         user_info = context.user_data.get('user_info', {})
         user_name = user_info.get('first_name', 'there')
         await update.message.reply_text(
-            get_text(context, 'initial_welcome', user_name=user_name),
+            get_text(context, 'initial_welcome', {'user_name':user_name}),
             reply_markup=ReplyKeyboardMarkup(
                 get_main_menu(context),
                 one_time_keyboard=True,
