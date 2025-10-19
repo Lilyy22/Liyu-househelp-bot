@@ -640,18 +640,13 @@ def get_user_language(context):
     return context.user_data.get('language', 'amharic')
 
 def get_text(context, text_key, kwargs):
-    """Get text in user's selected language."""
     language = get_user_language(context)
     text = TEXTS[language].get(text_key, '')
-    
     if isinstance(text, dict):
-        # For nested dictionaries like service_details
         key = kwargs.get('key', '')
-        return text.get(key, '')
-    
+        text = text.get(key, '')
     if kwargs:
-        return text.format(kwargs)
-    
+        return text.format(kwargs)  # ← This is wrong
     return text
 
 def get_menu(context, menu_key):
