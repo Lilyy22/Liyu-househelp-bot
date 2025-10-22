@@ -810,12 +810,29 @@ async def language_selection(update: Update, context: ContextTypes.DEFAULT_TYPE)
     
     if choice == "🇬🇧 English":
         context.user_data['language'] = 'english'
+        language_name = "English"
     elif choice == "🇪🇹 Amharic":
         context.user_data['language'] = 'amharic'
+        language_name = "አማርኛ (Amharic)"
+    else:
+        # Default fallback
+        context.user_data['language'] = 'amharic'
+        language_name = "አማርኛ (Amharic)"
     
-    await update.message.reply_text(
-        get_text(context, 'language_changed')
-    )
+    # Send language change confirmation
+    if context.user_data['language'] == 'english':
+        await update.message.reply_text(
+            f"✅ Language Updated!\n\n"
+            f"Your language has been changed to {language_name}.\n"
+            f"All future messages will be in English.\n\n"
+            f"Returning to main menu..."
+        )
+    else:
+        await update.message.reply_text(
+            f"✅ ቋንቋ ተቀይሯል!\n\n"
+            f"ቋንቋዎ ወደ {language_name} ተቀይሯል።\n"
+            f"ወደ ዋና ገፅ በመመለስ ላይ..."
+        )
     
     # Return to main menu
     user_info = context.user_data.get('user_info', {})
