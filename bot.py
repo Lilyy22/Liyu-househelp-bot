@@ -74,7 +74,7 @@ MENU_TEXT = {
 TEXTS = {
     'english': {
         'initial_welcome': (
-            "👋 Welcome to Liyu House help! 🏠\n\n"
+            "👋 Welcome to Liyu Househelp! 🏠\n\n"
             "Hello {user_name}! We're delighted to have you here.\n\n"
             "🌟 Your Trusted Home Service Partner\n\n"
             "We connect you with professional, verified staff for all your household needs.\n\n"
@@ -85,9 +85,9 @@ TEXTS = {
             "Choose an option below to continue:"
         ),
         'info_text': (
-            "ℹ️ About Liyu House help 🏠\n\n"
+            "ℹ️ About Liyu Househelp 🏠\n\n"
             "🌟 Who We Are:\n"
-            "Liyu House help is Ethiopia's premier home services provider. We've been connecting families "
+            "Liyu Househelp is Ethiopia's premier home services provider. We've been connecting families "
             "with trusted household staff since 2020.\n\n"
             "🛠️ Our Services:\n"
             "• 🧹 Full House Work - Complete household management\n"
@@ -293,7 +293,7 @@ TEXTS = {
             "Call us: 0966214878\n"
             "💬 Questions?\n"
             "Use /help anytime for assistance.\n\n"
-            "Thank you for choosing Liyu House help! 🌟\n"
+            "Thank you for choosing Liyu Househelp! 🌟\n"
             "We look forward to serving you!"
         ),
         'cancelled': (
@@ -303,11 +303,11 @@ TEXTS = {
             "Want to try again?\n"
             "• Use /start to begin a new request\n"
             "• Use /help for assistance\n\n"
-            "Thank you for considering Liyu House help! 🏠\n"
+            "Thank you for considering Liyu Househelp! 🏠\n"
             "We're here whenever you need us."
         ),
         'help': (
-            "🤖 Liyu House help Bot - Help Guide 📖\n\n"
+            "🤖 Liyu Househelp Bot - Help Guide 📖\n\n"
             "Available Commands:\n"
             "• /start - Open main menu\n"
             "• /help - Show this help message\n"
@@ -316,7 +316,7 @@ TEXTS = {
             "🚀 Start - Request a Service\n"
             "Begin the process to request household staff.\n\n"
             "ℹ️ Info - About Us\n"
-            "Learn about Liyu House help and our services.\n\n"
+            "Learn about Liyu Househelp and our services.\n\n"
             "⚙️ Settings - Preferences\n"
             "Change language and other settings.\n\n"
             "🛠️ Our Services:\n"
@@ -333,13 +333,14 @@ TEXTS = {
             "Phone: 0966214878\n"
             "Email: info@liyuagency.com\n"
             "Hours: 8:00 AM - 8:00 PM\n\n"
-            "Liyu House help - Your Trusted Home Service Partner 🌟"
+            "Liyu Househelp - Your Trusted Home Service Partner 🌟"
         )
     },
     'amharic': {
         'initial_welcome': (
-            "👋 ወደ ልዩ አጋዥ እንኳን በደህና መጡ!\n\n"
-            "ሰላም {user_name}!\n\n"
+            "👋 ወደ ልዩ አጋዥ እንኳን በደህና መጡ! 🏠\n\n"
+            "ሰላም {user_name}! እንኳን ደስ ያለዎት!\n\n"
+            "🌟 የታመኑ የቤት አገልግሎት አጋሮች\n\n"
             "ለሁሉም የቤት ውስጥ ፍላጎቶ የሰለጠኑ እና የተረጋገጠ መረጃ ካላቸው አጋዦች ጋር እናገናኝዎታለን።\n\n"
             "ምን ማድረግ ይፈልጋሉ?\n"
             "🚀 ጀምር - አገልግሎት ይጠይቁ\n"
@@ -373,8 +374,7 @@ TEXTS = {
         ),
         'settings_text': (
             "⚙️ማስተካከያ\n\n"
-            "ቋንቋ: {current_language}\n"
-            "ለሁሉም ግንኙነቶች የሚመርጡትን ቋንቋ ይቀይሩ።\n\n"
+            "ቋንቋ ይቀይሩ።\n\n"
         ),
         'language_changed': (
             "✅ ቋንቋ ተቀይሯል!\n\n"
@@ -687,8 +687,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     welcome_text = get_text(context, 'initial_welcome', {'user_name': user.first_name})
     
     welcome_with_contact = (
-        "📞 ልዩ አጋዥ\n"
-        f"Phone: 0966214878\n\n"
         f"{welcome_text}"
     )
     
@@ -1550,10 +1548,23 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if 'language' not in context.user_data:
         context.user_data['language'] = 'amharic'
     
+    # Use proper text system for consistent language
+    language = get_user_language(context)
+    if language == 'amharic':
+        message_text = (
+            f"👋 ሰላም {user.first_name}! ወደ ልዩ አጋዥ እንኳን በደህና መጡ! 🏠\n\n"
+            "የቤት አገልግሎቶችን ለመያዝ እዚህ ነኝ።\n\n"
+            "ዋና ገፅን ለመክፈት /start ይጠቀሙ።"
+        )
+    else:
+        message_text = (
+            f"👋 Hello {user.first_name}! Welcome to Liyu Househelp! 🏠\n\n"
+            "I'm here to help you book our home services.\n\n"
+            "Please use /start to open the main menu."
+        )
+    
     await update.message.reply_text(
-        f"👋 Hello {user.first_name}! Welcome to ልዩ አጋዥ! 🏠\n\n"
-        "I'm here to help you book our home services.\n\n"
-        "Please use /start to open the main menu.",
+        message_text,
         reply_markup=ReplyKeyboardMarkup(
             get_main_menu(context),
             one_time_keyboard=True,
