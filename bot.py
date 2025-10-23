@@ -63,7 +63,7 @@ MENU_TEXT = {
             ["✅ አረጋግጥ እና ላክ"],
             ["✏️ አገልግሎት አይነት ቀይር", "✏️ አገልግሎቶች ቀይር"],
             ["✏️ ስም ቀይር", "✏️ ስልክ ቀይር"],
-            ["✏️ ሥራ ቦታ ቀይር", "❌ ሰርዝ"]
+            ["✏️ አድራሻ ቀይር", "❌ ሰርዝ"]
         ],
         'back_to_menu': [["🏠 ወደ ዋና ገፅ ተመለስ"]],
         'settings_menu': [["🌍 ቋንቋ ቀይር"], ["🏠 ወደ ዋና ገፅ ተመለስ"]]
@@ -339,8 +339,7 @@ TEXTS = {
     'amharic': {
         'initial_welcome': (
             "👋 ወደ ልዩ አጋዥ እንኳን በደህና መጡ! 🏠\n\n"
-            "ሰላም {user_name}! እንኳን ደስ ያለዎት!\n\n"
-            "🌟 የታመኑ የቤት አገልግሎት አጋሮች\n\n"
+            "ሰላም {user_name}!"
             "ለሁሉም የቤት ውስጥ ፍላጎቶ የሰለጠኑ እና የተረጋገጠ መረጃ ካላቸው አጋዦች ጋር እናገናኝዎታለን።\n\n"
             "ምን ማድረግ ይፈልጋሉ?\n"
             "🚀 ጀምር - አገልግሎት ይጠይቁ\n"
@@ -349,7 +348,6 @@ TEXTS = {
             "ለመቀጠል ከዚህ በታች አንድ አማራጭ ይምረጡ:"
         ),
         'info_text': (
-            "ስለ ልዩ አጋዥ 🏠\n\n"
             "እኛ ማን ነን:\n"
             "ልዩ አጋዥ የኢትዮጵያ ቀዳሚ የቤት አገልግሎት አቅራቢ ነው። ቤተሰቦችን ከታመኑ የቤት ሰራተኞች ጋር እናገናኛለን።\n\n"
             "🛠️አገልግሎቶቻችን:\n"
@@ -469,11 +467,11 @@ TEXTS = {
             "• ለእርስዎ ቅርብ አጋዥ ለመመደብ\n"
             "• ትክክለኛ የአገልግሎት ጊዜ ለመስጠት\n"
             "• ቅልጥፍና ለመጠበቅ\n\n"
-            "ሥራ ቦታዎ ደህንነቱ የተጠበቀ ነው እና ለአገልግሎት ዓላማ ብቻ ጥቅም ላይ ይውላል።"
+            "አድራሻዎ ደህንነቱ የተጠበቀ ነው እና ለአገልግሎት ዓላማ ብቻ ጥቅም ላይ ይውላል።"
         ),
         'location_manual_prompt': (
             "አድራሻዎን ያስገቡ\n\n"
-            "እባክዎ የቤትዎን አድራሻ ወይም ሥራ ቦታ ይስጡ:\n\n"
+            "እባክዎ የቤትዎን አድራሻ ወይም አድራሻ ይስጡ:\n\n"
             "• የመንገድ ስም እና ቁጥር\n"
             "• ሰፈር/አካባቢ\n"
             "• ከተማ/ወረዳ\n"
@@ -1233,7 +1231,7 @@ async def ask_for_location(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     # Create location sharing keyboard
     location_keyboard = [
-        [KeyboardButton("📍 Share My Location" if language == 'english' else "📍 ሥራ ቦታ አጋራ", request_location=True)],
+        [KeyboardButton("📍 Share My Location" if language == 'english' else "📍 አድራሻ አጋራ", request_location=True)],
         ["✏️ Enter Address Manually" if language == 'english' else "✏️ አድራሻ አስገባ"]
     ]
     
@@ -1266,15 +1264,15 @@ async def location(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     choice = update.message.text
     
-    if choice in ["📍 Share My Location", "📍 ሥራ ቦታ አጋራ"]:
+    if choice in ["📍 Share My Location", "📍 አድራሻ አጋራ"]:
         await update.message.reply_text(
-            "📍 Please click the location button above to share your location." if language == 'english' else "📍 ሥራ ቦታ ለመጋራት ከላይ ያለውን ቁልፍ ይጫኑ።"
+            "📍 Please click the location button above to share your location." if language == 'english' else "📍 አድራሻ ለመጋራት ከላይ ያለውን ቁልፍ ይጫኑ።"
         )
         return LOCATION
     
     elif choice in ["✏️ Enter Address Manually", "✏️ አድራሻ አስገባ"]:
         await update.message.reply_text(
-            get_text(context, 'location_manual_prompt'),
+            get_text(context, 'location_manual_prompt', {}),
             reply_markup=ReplyKeyboardRemove()
         )
         return LOCATION
@@ -1477,7 +1475,7 @@ async def confirmation(update: Update, context: ContextTypes.DEFAULT_TYPE):
         context.user_data['editing_from_confirmation'] = True
         language = get_user_language(context)
         location_keyboard = [
-            [KeyboardButton("📍 Share My Location" if language == 'english' else "📍 ሥራ ቦታ አጋራ", request_location=True)],
+            [KeyboardButton("📍 Share My Location" if language == 'english' else "📍 አድራሻ አጋራ", request_location=True)],
             ["✏️ Enter Address Manually" if language == 'english' else "✏️ አድራሻ አስገባ"]
         ]
         
@@ -1659,12 +1657,12 @@ def main():
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
     # Start the Bot
-    print("🤖 ልዩ አጋዥ Client Service Bot is starting...")
-    print("✅ Token loaded from environment variables")
-    print("🏠 Welcome to ልዩ አጋዥ!")
-    print("🌍 Multi-language support: English & Amharic")
-    print("📝 Bot is ready to accept service requests!")
-    print("✨ Features:")
+    print("Liyu Househelp Client Service Bot is starting...")
+    print("Token loaded from environment variables")
+    print("Welcome to Liyu Househelp!")
+    print("Multi-language support: English & Amharic")
+    print("Bot is ready to accept service requests!")
+    print("Features:")
     print("   • Main Menu with Start, Info, and Settings")
     print("   • Complete button-based navigation")
     print("   • Full Amharic translations")
@@ -1673,7 +1671,7 @@ def main():
     print("   • 'Other' service option")
     print("   • Returning user recognition with saved contact info")
     print("   • Post-submission menu for easy navigation")
-    print("   • 📍 Location collection with GPS and manual address entry")
+    print("   • Location collection with GPS and manual address entry")
     print("Press Ctrl+C to stop the bot")
     
     try:
