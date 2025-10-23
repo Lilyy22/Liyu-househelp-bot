@@ -1187,7 +1187,7 @@ async def phone(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     if choice in ["📱 Share My Phone Number", "📱 ስልክ ቁጥሬን አጋራ"]:
         await update.message.reply_text(
-            get_text(context, 'phone_prompt')
+            get_text(context, 'phone_prompt', {})
         )
         return PHONE
     
@@ -1208,7 +1208,7 @@ async def phone(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
         if not re.match(ethiopian_pattern, cleaned_phone):
             await update.message.reply_text(
-                get_text(context, 'phone_invalid')
+                get_text(context, 'phone_invalid', {})
             )
             return PHONE
         
@@ -1238,7 +1238,7 @@ async def ask_for_location(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ]
     
     await update.message.reply_text(
-        get_text(context, 'location_prompt'),
+        get_text(context, 'location_prompt', {}),
         reply_markup=ReplyKeyboardMarkup(
             location_keyboard,
             one_time_keyboard=True,
@@ -1285,7 +1285,7 @@ async def location(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
         if len(address) < 5:
             await update.message.reply_text(
-                get_text(context, 'location_invalid')
+                get_text(context, 'location_invalid', {})
             )
             return LOCATION
         
