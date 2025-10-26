@@ -339,7 +339,7 @@ TEXTS = {
     'amharic': {
         'initial_welcome': (
             "👋 ወደ ልዩ አጋዥ እንኳን በደህና መጡ! 🏠\n\n"
-            "ሰላም {user_name}!"
+            "ሰላም {user_name}! \n"
             "ለሁሉም የቤት ውስጥ ፍላጎቶ የሰለጠኑ እና የተረጋገጠ መረጃ ካላቸው አጋዦች ጋር እናገናኝዎታለን።\n\n"
             "ምን ማድረግ ይፈልጋሉ?\n"
             "🚀 ጀምር - አገልግሎት ይጠይቁ\n"
@@ -380,8 +380,7 @@ TEXTS = {
             "ወደ ዋና ገፅ በመመለስ ላይ..."
         ),
         'service_type_prompt': (
-            "👋 ሰላም {user_name}!\n\n"
-            "እባክዎ የአገልግሎት አይነትዎን ይምረጡ:\n\n"
+            "እባክዎ የሚፈልጉትን የአገልግሎት አይነትዎን ይምረጡ:\n\n"
         ),
         'service_type_selected': {
             "⏰ Permanent": "✅ ቋሚ አገልግሎት",
@@ -661,6 +660,8 @@ def get_main_menu(context):
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Start the conversation with main menu."""
+    context.user_data.clear()
+
     user = update.message.from_user
     
     if 'language' not in context.user_data:
@@ -704,7 +705,7 @@ async def main_menu_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     language = get_user_language(context)
     
     # Check for Start button
-    if choice in ["🚀 Start", "🚀 ጀምር"]:
+    if choice in ["🚀 Start", "🚀 ጀምር", "/start"]:
         user = update.message.from_user
         await update.message.reply_text(
             get_text(context, 'service_type_prompt', {'user_name': user.first_name}),
@@ -958,7 +959,7 @@ async def services(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if choice == full_house_work:
             context.user_data['selected_services'] = [choice]
             await update.message.reply_text(
-                f"✅ Selected: {choice}\n\n"
+                f"✅ {choice}\n\n"
                 f"{'Note: Full House Work includes all services, so other selections have been cleared.' if language == 'english' else 'ማስታወሻ: ሙሉ የቤት ስራ ሁሉንም አገልግሎቶች ያካትታል፣ ስለዚህ ሌሎች ምርጫዎች ተሰርዘዋል።'}\n\n"
                 f"{'Click ✅ Done Selecting when ready.' if language == 'english' else '✅ ምርጫ ጨርሻለሁ ን ይጫኑ።'}",
                 reply_markup=ReplyKeyboardMarkup(
