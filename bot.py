@@ -490,7 +490,7 @@ TEXTS = {
         'location_confirmed': (
             "✅ አድራሻ ተቀምጧል!\n\n"
             "📍 አድራሻዎ: {location}\n\n"
-            "ለእርስዎ አካባቢ ምርጥ ሰራተኛ ለመመደብ ይህን እንጠቀማለን።\n\n"
+            "ለእርስዎ አካባቢ ምርጥ አጋዥ ለመመደብ ይህን እንጠቀማለን።\n\n"
             "ሙሉ ጥያቄዎን እናረጋግጥ..."
         ),
         'confirmation_summary': (
@@ -720,7 +720,7 @@ async def main_menu_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Check for Info button
     elif choice in ["ℹ️ Info", "ℹ️ መረጃ"]:
         await update.message.reply_text(
-            get_text(context, 'info_text'),
+            get_text(context, 'info_text', {}),
             reply_markup=ReplyKeyboardMarkup(
                 get_menu(context, 'back_to_menu'),
                 one_time_keyboard=True,
@@ -1226,6 +1226,26 @@ async def phone(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
         return await ask_for_location(update, context)
 
+async def ask_for_phone(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Ask user for their phone."""
+    language = get_user_language(context)
+    
+    # Create phone sharing keyboard
+    phone_keyboard = [
+        [KeyboardButton("📍 Share My Phone" if language == 'english' else "📍 ስልክ ቁጥር አጋራ", request_phone=True)],
+        ["✏️ Enter Phone Manually" if language == 'english' else "✏️ ስልክ ቁጥር አስገባ"]
+    ]
+    
+    await update.message.reply_text(
+        get_text(context, 'phone_manual_prompt', {}),
+        reply_markup=ReplyKeyboardMarkup(
+            phone_keyboard,
+            one_time_keyboard=True,
+            resize_keyboard=True
+        )
+    )
+    return PHONE
+
 async def ask_for_location(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Ask user for their location."""
     language = get_user_language(context)
@@ -1367,13 +1387,13 @@ async def confirmation(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
         # Final success message
         await update.message.reply_text(
-            get_text(context, 'success_message',
-                      {
-                    'name': name,
-                    'service_type': service_type,
-                    'services': services,
-                    'location': location
-                }))
+            get_text(context, 'success_message', {
+                'name': name,
+                'service_type': service_type,
+                'services': services,
+                'location': location,
+                'phone': phone
+            }))
         
         language = get_user_language(context)
         post_submission_menu = [
@@ -1481,7 +1501,7 @@ async def confirmation(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ]
         
         await update.message.reply_text(
-            get_text(context, 'location_prompt'),
+            get_text(context, 'location_prompt', {}),
             reply_markup=ReplyKeyboardMarkup(
                 location_keyboard,
                 one_time_keyboard=True,
@@ -1492,7 +1512,7 @@ async def confirmation(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     elif choice == confirmation_menu[3][1]:  # "Cancel Request" equivalent
         await update.message.reply_text(
-            get_text(context, 'cancelled'),
+            get_text(context, 'cancelled', {}),
             reply_markup=ReplyKeyboardRemove()
         )
         context.user_data.clear()
@@ -1536,7 +1556,7 @@ async def post_submission_handler(update: Update, context: ContextTypes.DEFAULT_
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Cancel the conversation."""
     await update.message.reply_text(
-        get_text(context, 'cancelled'),
+        get_text(context, 'cancelled', {}),
         reply_markup=ReplyKeyboardRemove()
     )
     context.user_data.clear()
@@ -1548,7 +1568,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         context.user_data['language'] = 'amharic'
     
     await update.message.reply_text(
-        get_text(context, 'help'),
+        get_text(context, 'help', {}),
         reply_markup=ReplyKeyboardMarkup(
             get_main_menu(context),
             one_time_keyboard=True,
