@@ -1352,6 +1352,11 @@ async def confirmation(update: Update, context: ContextTypes.DEFAULT_TYPE):
     choice = update.message.text
     confirmation_menu = get_menu(context, 'confirmation_menu')
     
+    # Debug logging
+    logger.info(f"Confirmation handler called with choice: {choice}")
+    logger.info(f"Expected confirmation button: {confirmation_menu[0][0]}")
+    logger.info(f"Match result: {choice == confirmation_menu[0][0]}")
+    
     if choice == confirmation_menu[0][0]:  # "Confirm & Submit Request" equivalent
         # Get all collected data
         name = context.user_data.get('name', 'Not provided')
@@ -1517,6 +1522,11 @@ async def confirmation(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         context.user_data.clear()
         return ConversationHandler.END
+    
+    else:
+        # Fallback: if choice doesn't match, show confirmation again
+        logger.warning(f"Unmatched choice in confirmation: {choice}")
+        return await show_confirmation(update, context)
 
 async def post_submission_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle post-submission menu choices."""
